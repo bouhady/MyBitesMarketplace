@@ -1,33 +1,17 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ScrollView } from 'react-native';
-import styled from 'styled-components/native';
 import { useAppDispatch } from '../../../app/store/store';
 import { CartRepository } from '../../../data/repositories/CartRepository';
 import { cartActions } from '../../cart/state/cartSlice';
 import { routes } from '../../../navigation/routes';
 import type { RootStackParamList } from '../../../navigation/RootNavigator.types';
-import { Screen, ScreenContent } from '../../../ui/components/Screen';
-import { BodyText, CaptionText, SubtitleText, TitleText } from '../../../ui/components/Text';
+import { Screen } from '../../../ui/components/Screen';
 import { LoadingOverlay } from '../../../ui/components/LoadingOverlay';
-import { Button } from '../../../ui/components/Button';
-import { ErrorState } from '../../../ui/components/ErrorState';
-import { formatMoney } from '../../../shared/utils/formatMoney';
 import { useProductDetails } from '../hooks/useProductDetails';
-import { ProductImageCarousel } from '../components/ProductImageCarousel';
-import { StockBadge } from '../components/StockBadge';
-import { AddToCartPanel } from '../components/AddToCartPanel';
+import { ProductDetailsContent } from '../components/ProductDetailsContent';
+import { ProductUnavailableState } from '../components/ProductUnavailableState';
 
 type Props = NativeStackScreenProps<RootStackParamList, typeof routes.productDetails>;
-
-const Content = styled.View(({ theme }) => ({
-  gap: theme.spacing.md,
-  paddingBottom: theme.spacing.xxl
-}));
-
-const Price = styled(TitleText)(({ theme }) => ({
-  color: theme.colors.accent
-}));
 
 export const ProductDetailsScreen = ({ route, navigation }: Props) => {
   const dispatch = useAppDispatch();
@@ -56,29 +40,19 @@ export const ProductDetailsScreen = ({ route, navigation }: Props) => {
   return (
     <Screen>
       {product ? (
-        <ScreenContent>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <Content>
-              <ProductImageCarousel urls={galleryUrls} />
-              <StockBadge available={product.stock.available} />
-              <SubtitleText>{product.title}</SubtitleText>
-              <Price>{formatMoney(product.price)}</Price>
-              <CaptionText>
-                {product.rating.average.toFixed(1)} rating from {product.rating.count} reviews
-              </CaptionText>
-              <BodyText>{product.description}</BodyText>
-              <AddToCartPanel quantity={quantity} max={maxQuantity} onQuantityChange={setQuantity} onAdd={addToCart} />
-              <Button label="View cart" variant="secondary" onPress={openCart} />
-            </Content>
-          </ScrollView>
-        </ScreenContent>
+        <ProductDetailsContent
+          product={product}
+          galleryUrls={galleryUrls}
+          quantity={quantity}
+          maxQuantity={maxQuantity}
+          onQuantityChange={setQuantity}
+          onAddToCart={addToCart}
+          onOpenCart={openCart}
+        />
       ) : status === 'idle' || status === 'loading' ? (
         <LoadingOverlay label="Loading product" />
       ) : (
-        <ScreenContent>
-          <ErrorState title="Product unavailable" message={error ?? 'This product could not be found.'} onRetry={retry} />
-          <Button label="Back to catalog" variant="secondary" onPress={backToCatalog} />
-        </ScreenContent>
+        <ProductUnavailableState error={error} onRetry={retry} onBackToCatalog={backToCatalog} />
       )}
     </Screen>
   );

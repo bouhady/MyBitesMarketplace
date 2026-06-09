@@ -45,6 +45,7 @@ Use this file as the rulebook for future AI-assisted changes. Follow the current
 - Quantity buttons must keep accessible labels: `Decrease quantity` and `Increase quantity`.
 - Use stable `useCallback` handlers when callbacks are passed into memoized children.
 - Components must use a single render return. Put state branches inside the main returned JSX, for example `{cart.isEmpty ? <EmptyCartState /> : <ScreenContent>...</ScreenContent>}`, instead of using multiple conditional component returns.
+- Split large returned JSX blocks into smaller named components with meaningful roles, such as `ProductDetailsContent`, `ProductUnavailableState`, or `PopulatedCartContent`, instead of embedding long `ScrollView`/`Content` trees directly in a screen return.
 
 ## Redux And Saga Rules
 
