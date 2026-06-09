@@ -25,11 +25,12 @@ npm run test:watch
 ## Current Test Suites
 
 ```text
-__tests__/
+src/test/
   cart/
     cartSelectors.test.ts
     cartSlice.test.ts
     cartSaga.test.ts
+    selectCartItemsWithProducts.test.ts
   catalog/
     catalogSaga.test.ts
     catalogSlice.test.ts
@@ -45,11 +46,11 @@ Slice tests should call reducers directly and assert state transitions.
 
 Existing examples:
 
-- `__tests__/cart/cartSlice.test.ts`
+- `src/test/cart/cartSlice.test.ts`
   - add-to-cart clamps quantity at available stock
   - decrement removes item at zero
   - saga-approved increment clamps with `maxQuantity`
-- `__tests__/catalog/catalogSlice.test.ts`
+- `src/test/catalog/catalogSlice.test.ts`
   - stale catalog responses are ignored
   - product detail failures do not change catalog list status
   - equivalent request payloads create stable signatures
@@ -111,7 +112,7 @@ Component tests use React Native Testing Library and `renderWithProviders`.
 
 Existing example:
 
-- `__tests__/ui/QuantitySelector.test.tsx` verifies the `+` button does not increment above stock boundary.
+- `src/test/ui/QuantitySelector.test.tsx` verifies the `+` button does not increment above stock boundary.
 
 Component tests should focus on observable behavior:
 

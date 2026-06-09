@@ -1,5 +1,5 @@
-import { cartActions, cartReducer } from '../../src/features/cart/state/cartSlice';
-import { productFactory } from '../../src/test/factories/productFactory';
+import { cartActions, cartReducer } from '../../features/cart/state/cartSlice';
+import { productFactory } from '../factories/productFactory';
 
 describe('cartSlice', () => {
   it('adds items and clamps at available stock', () => {

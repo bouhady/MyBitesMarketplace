@@ -1,7 +1,7 @@
-import type { RootState } from '../../src/app/store/rootReducer';
-import { selectCartPricing } from '../../src/features/cart/state/cartSelectors';
-import { productFactory } from '../../src/test/factories/productFactory';
-import { cartItemFactory } from '../../src/test/factories/cartFactory';
+import type { RootState } from '../../app/store/rootReducer';
+import { selectCartPricing } from '../../features/cart/state/cartSelectors';
+import { productFactory } from '../factories/productFactory';
+import { cartItemFactory } from '../factories/cartFactory';
 
 describe('cartSelectors', () => {
   it('calculates subtotal, tax, discount, total, and total items', () => {

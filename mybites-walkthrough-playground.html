@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MyBites Marketplace Walkthrough Playground</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101114;
+      --panel: #181a1f;
+      --panel-2: #20242b;
+      --line: #313741;
+      --text: #eef2f5;
+      --muted: #a8b0bd;
+      --soft: #778191;
+      --accent: #f4b860;
+      --accent-2: #7dd3c7;
+      --good: #84cc8b;
+      --warn: #f5c96b;
+      --bad: #f18b8b;
+      --blue: #8bb8ff;
+      --violet: #c9a4ff;
+      --radius: 8px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .controls {
+      border-right: 1px solid var(--line);
+      background: #14161a;
+      padding: 18px;
+      overflow: auto;
+      max-height: 100vh;
+    }
+
+    .main {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      min-height: 100vh;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 20px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: var(--muted);
+      margin: 22px 0 10px;
+    }
+
+    h3 {
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .lede {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .preset-grid,
+    .button-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .preset-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .preset,
+    .ghost,
+    .copy {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 9px 10px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .preset.active,
+    .copy {
+      border-color: rgba(244, 184, 96, 0.75);
+      background: rgba(244, 184, 96, 0.14);
+    }
+
+    .ghost {
+      text-align: center;
+    }
+
+    label.control {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    select,
+    input[type="range"],
+    textarea {
+      width: 100%;
+    }
+
+    select,
+    textarea {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      color: var(--text);
+      padding: 9px 10px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 74px;
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      padding: 6px 0;
+    }
+
+    .check input {
+      margin-top: 2px;
+    }
+
+    .range-value {
+      color: var(--text);
+      font-family: var(--mono);
+    }
+
+    .preview {
+      overflow: auto;
+      padding: 20px;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: minmax(330px, 0.95fr) minmax(420px, 1.45fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(125, 211, 199, 0.13);
+      color: var(--accent-2);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .tutorial-body {
+      padding: 16px;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 10px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .step.active {
+      border-color: rgba(244, 184, 96, 0.8);
+      background: rgba(244, 184, 96, 0.08);
+    }
+
+    .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--panel-2);
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 12px;
+      border: 1px solid var(--line);
+    }
+
+    .step p,
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .file {
+      color: var(--blue);
+      font-family: var(--mono);
+      font-size: 11px;
+      overflow-wrap: anywhere;
+      margin-top: 5px;
+    }
+
+    .diagram-wrap {
+      padding: 12px;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      min-height: 390px;
+      display: block;
+      background: #111318;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .node rect {
+      fill: #20242b;
+      stroke: #424b58;
+      stroke-width: 1.2;
+      rx: 8;
+    }
+
+    .node.active rect {
+      stroke: var(--accent);
+      stroke-width: 2.2;
+      filter: drop-shadow(0 0 10px rgba(244, 184, 96, 0.18));
+    }
+
+    .node text {
+      fill: var(--text);
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .node .sub {
+      fill: var(--muted);
+      font-size: 10px;
+      font-family: var(--mono);
+    }
+
+    .edge {
+      fill: none;
+      stroke-width: 2;
+      opacity: 0.85;
+    }
+
+    .edge.data {
+      stroke: var(--blue);
+    }
+
+    .edge.state {
+      stroke: var(--accent-2);
+      stroke-dasharray: 6 4;
+    }
+
+    .edge.rules {
+      stroke: var(--accent);
+      stroke-dasharray: 3 4;
+    }
+
+    .legend,
+    .metrics,
+    .requirements {
+      display: grid;
+      gap: 8px;
+      padding: 12px 16px 16px;
+    }
+
+    .metrics {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    .requirements {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .req {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 8px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      margin-top: 4px;
+      flex: 0 0 auto;
+      background: var(--good);
+    }
+
+    .dot.warn {
+      background: var(--warn);
+    }
+
+    .prompt {
+      border-top: 1px solid var(--line);
+      background: #14161a;
+      padding: 14px 18px 18px;
+    }
+
+    .prompt-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      color: #d9e2ec;
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.48;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      max-height: 210px;
+      overflow: auto;
+    }
+
+    @media (max-width: 980px) {
+      .shell,
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        max-height: none;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .main {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="controls">
+      <h1>MyBites Tutorial Builder</h1>
+      <p class="lede">Shape a walkthrough for the React Native marketplace project. The preview and prompt update instantly.</p>
+
+      <h2>Presets</h2>
+      <div class="preset-grid" id="presetGrid"></div>
+
+      <h2>Walkthrough</h2>
+      <label class="control">
+        Tutorial focus
+        <select id="focus">
+          <option value="full">Full project walkthrough</option>
+          <option value="architecture">Architecture and clean boundaries</option>
+          <option value="marketplace">Marketplace user flows</option>
+          <option value="state">Redux Toolkit and Saga flow</option>
+          <option value="quality">Evaluation and edge cases</option>
+        </select>
+      </label>
+      <label class="control">
+        Audience
+        <select id="audience">
+          <option value="reviewer">Technical reviewer</option>
+          <option value="developer">New developer</option>
+          <option value="product">Product-minded stakeholder</option>
+        </select>
+      </label>
+      <label class="control">
+        Depth <span class="range-value" id="depthValue">3</span>
+        <input id="depth" type="range" min="1" max="5" step="1">
+      </label>
+
+      <h2>Include Sections</h2>
+      <label class="check"><input id="showTech" type="checkbox"> Mandatory technologies</label>
+      <label class="check"><input id="showFeatures" type="checkbox"> Marketplace features</label>
+      <label class="check"><input id="showData" type="checkbox"> Mock backend and data scale</label>
+      <label class="check"><input id="showQuality" type="checkbox"> Code quality expectations</label>
+      <label class="check"><input id="showUx" type="checkbox"> UX and UI requirements</label>
+
+      <h2>Diagram</h2>
+      <label class="check"><input id="paths" type="checkbox"> Show file paths</label>
+      <label class="check"><input id="edges" type="checkbox"> Show architecture connections</label>
+      <label class="check"><input id="exercises" type="checkbox"> Include practice tasks</label>
+
+      <h2>Custom Note</h2>
+      <label class="control">
+        Added instruction
+        <textarea id="note" placeholder="Example: Focus extra attention on stale response guards."></textarea>
+      </label>
+    </aside>
+
+    <main class="main">
+      <section class="preview">
+        <div class="preview-grid">
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <h3 id="tutorialTitle">Full project walkthrough</h3>
+                <p class="small" id="tutorialSubtitle">Reviewer-oriented path through architecture, features, data, and quality.</p>
+              </div>
+              <span class="tag" id="audienceTag">Technical reviewer</span>
+            </div>
+            <div class="metrics" id="metrics"></div>
+            <div class="tutorial-body">
+              <div class="step-list" id="stepList"></div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <h3>Architecture Map</h3>
+                <p class="small">Tap a preset or filter sections to change the tutorial emphasis.</p>
+              </div>
+              <span class="tag" id="depthTag">Depth 3</span>
+            </div>
+            <div class="diagram-wrap">
+              <svg id="diagram" viewBox="0 0 900 520" role="img" aria-label="MyBites Marketplace architecture diagram"></svg>
+            </div>
+            <div class="requirements" id="requirements"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="prompt">
+        <div class="prompt-top">
+          <h3>Copyable Tutorial Prompt</h3>
+          <button class="copy" id="copyButton">Copy prompt</button>
+        </div>
+        <pre id="promptOutput"></pre>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const DEFAULTS = {
+      preset: "full",
+      focus: "full",
+      audience: "reviewer",
+      depth: 3,
+      showTech: true,
+      showFeatures: true,
+      showData: true,
+      showQuality: true,
+      showUx: true,
+      paths: true,
+      edges: true,
+      exercises: true,
+      note: ""
+    };
+
+    const state = { ...DEFAULTS };
+
+    const presets = {
+      full: {
+        label: "Full Tour",
+        focus: "full",
+        audience: "reviewer",
+        depth: 3,
+        showTech: true,
+        showFeatures: true,
+        showData: true,
+        showQuality: true,
+        showUx: true,
+        paths: true,
+        edges: true,
+        exercises: true
+      },
+      architecture: {
+        label: "Architecture",
+        focus: "architecture",
+        audience: "developer",
+        depth: 4,
+        showTech: true,
+        showFeatures: false,
+        showData: true,
+        showQuality: true,
+        showUx: false,
+        paths: true,
+        edges: true,
+        exercises: true
+      },
+      marketplace: {
+        label: "User Flows",
+        focus: "marketplace",
+        audience: "product",
+        depth: 3,
+        showTech: false,
+        showFeatures: true,
+        showData: true,
+        showQuality: false,
+        showUx: true,
+        paths: false,
+        edges: true,
+        exercises: true
+      },
+      state: {
+        label: "Redux Saga",
+        focus: "state",
+        audience: "developer",
+        depth: 5,
+        showTech: true,
+        showFeatures: true,
+        showData: true,
+        showQuality: true,
+        showUx: false,
+        paths: true,
+        edges: true,
+        exercises: true
+      },
+      quality: {
+        label: "Review Ready",
+        focus: "quality",
+        audience: "reviewer",
+        depth: 5,
+        showTech: true,
+        showFeatures: true,
+        showData: true,
+        showQuality: true,
+        showUx: true,
+        paths: true,
+        edges: false,
+        exercises: false
+      }
+    };
+
+    const labels = {
+      full: "Full project walkthrough",
+      architecture: "Architecture and clean boundaries",
+      marketplace: "Marketplace user flows",
+      state: "Redux Toolkit and Saga flow",
+      quality: "Evaluation and edge cases",
+      reviewer: "Technical reviewer",
+      developer: "New developer",
+      product: "Product-minded stakeholder"
+    };
+
+    const sectionCopy = {
+      showTech: {
+        title: "Mandatory technologies",
+        text: "React Native, TypeScript, styled-components/native, Redux Toolkit, and redux-saga are visible in runtime code."
+      },
+      showFeatures: {
+        title: "Marketplace features",
+        text: "Catalog, pagination, infinite scroll, search, category filtering, sorting, details, cart, quantity controls, and checkout are covered."
+      },
+      showData: {
+        title: "Mock backend and data scale",
+        text: "Repositories wrap mock API calls with artificial delay, typed API contracts, pagination, and product data shaped for large catalogs."
+      },
+      showQuality: {
+        title: "Code quality expectations",
+        text: "Clean Architecture, domain rules, strict TypeScript, stale response guards, tests, and performance choices are called out."
+      },
+      showUx: {
+        title: "UX and UI requirements",
+        text: "Loading, empty, error, retry, stock, not-found, checkout success/error, and polished styled UI states are included."
+      }
+    };
+
+    const baseSteps = {
+      full: [
+        ["Start at the shell", "Trace AppProviders, NavigationProvider, StoreProvider, ThemeProvider, and ErrorBoundary before entering the stack navigator.", "src/app/App.tsx"],
+        ["Read the domain first", "Review Product, CartItem, Order, pagination, sort, cart rules, and pricing rules so the UI behavior has a business source of truth.", "src/domain"],
+        ["Walk the catalog flow", "Follow initial load, search debounce, category filtering, sorting, page/limit pagination, pull-to-refresh, and infinite scroll.", "src/features/catalog"],
+        ["Open product details", "Check product image display, rating, stock badge, unavailable state, quantity selection, and add-to-cart stock clamping.", "src/features/productDetails"],
+        ["Manage cart and checkout", "Verify add, remove, increment, decrement, persisted cart hydration, pricing summary, mock order placement, success, and error flows.", "src/features/cart, src/features/checkout"]
+      ],
+      architecture: [
+        ["Layer boundaries", "Separate app providers, navigation, feature orchestration, domain rules, data repositories, shared UI, and tests.", "ARCHITECTURE.md"],
+        ["Domain modeling", "Use typed Product, Category, CartItem, Order, Money, Pagination, and Sort structures instead of loosely shaped objects.", "src/domain"],
+        ["Data adapters", "Keep mock backend behavior behind marketplaceApi and repositories so feature code does not know data source details.", "src/data"],
+        ["Feature modules", "Keep screens and hooks stateful while reusable components receive typed props and callbacks.", "src/features"],
+        ["Shared primitives", "Use Button, Text, Screen, Chip, ErrorState, LoadingOverlay, Divider, and theme tokens for consistency.", "src/ui"]
+      ],
+      marketplace: [
+        ["Browse products", "Demonstrate product listing, responsive grid rendering, page/limit pagination, and infinite-scroll loading.", "src/features/catalog/components/ProductGrid.tsx"],
+        ["Refine the list", "Show search, debounced requests, category chips, and price/rating sort options.", "src/features/catalog/state/catalogSaga.ts"],
+        ["Inspect a product", "Highlight images, description, price, rating count, stock display, and not-found/error fallbacks.", "src/features/productDetails"],
+        ["Add to cart", "Use quantity controls with minimum and stock maximum bounds before dispatching the add-to-cart command.", "src/features/productDetails/components/AddToCartPanel.tsx"],
+        ["Place an order", "Review cart editing, pricing totals, mock order request, success route, and recoverable error route.", "src/features/checkout"]
+      ],
+      state: [
+        ["Store setup", "Start with configureStore, rootReducer, rootSaga, typed hooks, thunk disabled, and serializable checks enabled.", "src/app/store"],
+        ["Catalog saga", "Trace debounced search, takeLatest category/sort changes, load-more flow, and active request signatures.", "src/features/catalog/state"],
+        ["Cart saga", "Trace hydration, persistence debounce, ID-based increment commands, and stock-aware clamping through selected product data.", "src/features/cart/state"],
+        ["Checkout saga", "Follow place order request, loading/success/error states, and navigation reaction from the checkout hook.", "src/features/checkout/state"],
+        ["Selectors and tests", "Use selectors to compose derived data and tests to lock reducer, saga, and edge-case behavior.", "src/test"]
+      ],
+      quality: [
+        ["Strict TypeScript", "Confirm route params, Redux state, API types, entities, and component props avoid any and infer RootState safely.", "tsconfig.json"],
+        ["Robust business logic", "Verify quantity clamping, pricing calculations, stale response guards, failed detail isolation, and cart persistence sanitation.", "src/domain, src/features"],
+        ["Performance choices", "Call out FlashList, normalized catalog entities, memoized pure components, debounced search, and guarded pagination.", "src/features/catalog"],
+        ["Edge case handling", "Cover empty catalog, empty cart, loading, refreshing, loading more, no stock, not found, retry, checkout failure, and hydration errors.", "src/features"],
+        ["Verification", "Run lint, typecheck, Jest, and Expo dependency checks before submission.", "README.md"]
+      ]
+    };
+
+    const nodes = [
+      { id: "app", label: "App Shell", file: "src/app/App.tsx", x: 46, y: 44, w: 150, h: 62, layer: "app" },
+      { id: "nav", label: "Navigation", file: "src/navigation", x: 374, y: 44, w: 152, h: 62, layer: "app" },
+      { id: "ui", label: "UI Theme", file: "src/ui", x: 704, y: 44, w: 150, h: 62, layer: "ui" },
+      { id: "catalog", label: "Catalog", file: "src/features/catalog", x: 58, y: 188, w: 160, h: 66, layer: "feature" },
+      { id: "details", label: "Product Details", file: "src/features/productDetails", x: 270, y: 188, w: 170, h: 66, layer: "feature" },
+      { id: "cart", label: "Cart", file: "src/features/cart", x: 486, y: 188, w: 160, h: 66, layer: "feature" },
+      { id: "checkout", label: "Checkout", file: "src/features/checkout", x: 698, y: 188, w: 160, h: 66, layer: "feature" },
+      { id: "store", label: "Redux Store", file: "src/app/store", x: 70, y: 342, w: 160, h: 66, layer: "state" },
+      { id: "saga", label: "Redux Saga", file: "feature/state/*Saga.ts", x: 274, y: 342, w: 160, h: 66, layer: "state" },
+      { id: "repo", label: "Repositories", file: "src/data/repositories", x: 480, y: 342, w: 160, h: 66, layer: "data" },
+      { id: "api", label: "Mock API", file: "src/data/api", x: 688, y: 342, w: 160, h: 66, layer: "data" },
+      { id: "domain", label: "Domain Rules", file: "src/domain", x: 374, y: 452, w: 160, h: 52, layer: "domain" }
+    ];
+
+    const edges = [
+      ["app", "nav", "data"],
+      ["app", "store", "state"],
+      ["nav", "catalog", "data"],
+      ["nav", "details", "data"],
+      ["nav", "cart", "data"],
+      ["nav", "checkout", "data"],
+      ["ui", "catalog", "rules"],
+      ["ui", "details", "rules"],
+      ["ui", "cart", "rules"],
+      ["catalog", "store", "state"],
+      ["details", "store", "state"],
+      ["cart", "store", "state"],
+      ["checkout", "store", "state"],
+      ["store", "saga", "state"],
+      ["saga", "repo", "data"],
+      ["repo", "api", "data"],
+      ["catalog", "domain", "rules"],
+      ["details", "domain", "rules"],
+      ["cart", "domain", "rules"],
+      ["checkout", "domain", "rules"]
+    ];
+
+    const focusNodes = {
+      full: ["app", "nav", "catalog", "details", "cart", "checkout", "store", "saga", "repo", "api", "domain", "ui"],
+      architecture: ["app", "nav", "ui", "store", "repo", "api", "domain"],
+      marketplace: ["catalog", "details", "cart", "checkout", "ui", "api"],
+      state: ["store", "saga", "catalog", "cart", "checkout", "repo", "domain"],
+      quality: ["domain", "store", "saga", "repo", "api", "catalog", "cart"]
+    };
+
+    const $ = id => document.getElementById(id);
+
+    function applyPreset(id) {
+      Object.assign(state, DEFAULTS, presets[id], { preset: id, note: state.note });
+      syncControls();
+      updateAll();
+    }
+
+    function syncControls() {
+      ["focus", "audience"].forEach(id => $(id).value = state[id]);
+      ["showTech", "showFeatures", "showData", "showQuality", "showUx", "paths", "edges", "exercises"].forEach(id => {
+        $(id).checked = state[id];
+      });
+      $("depth").value = state.depth;
+      $("depthValue").textContent = state.depth;
+      $("note").value = state.note;
+    }
+
+    function bindControls() {
+      const presetGrid = $("presetGrid");
+      Object.entries(presets).forEach(([id, preset]) => {
+        const button = document.createElement("button");
+        button.className = "preset";
+        button.type = "button";
+        button.dataset.preset = id;
+        button.textContent = preset.label;
+        button.addEventListener("click", () => applyPreset(id));
+        presetGrid.appendChild(button);
+      });
+
+      ["focus", "audience"].forEach(id => {
+        $(id).addEventListener("change", event => {
+          state[id] = event.target.value;
+          state.preset = "custom";
+          updateAll();
+        });
+      });
+
+      ["showTech", "showFeatures", "showData", "showQuality", "showUx", "paths", "edges", "exercises"].forEach(id => {
+        $(id).addEventListener("change", event => {
+          state[id] = event.target.checked;
+          state.preset = "custom";
+          updateAll();
+        });
+      });
+
+      $("depth").addEventListener("input", event => {
+        state.depth = Number(event.target.value);
+        state.preset = "custom";
+        updateAll();
+      });
+
+      $("note").addEventListener("input", event => {
+        state.note = event.target.value.trim();
+        updateAll();
+      });
+
+      $("copyButton").addEventListener("click", async () => {
+        await navigator.clipboard.writeText($("promptOutput").textContent);
+        const button = $("copyButton");
+        const original = button.textContent;
+        button.textContent = "Copied!";
+        setTimeout(() => button.textContent = original, 1200);
+      });
+    }
+
+    function renderPreview() {
+      $("tutorialTitle").textContent = labels[state.focus];
+      $("audienceTag").textContent = labels[state.audience];
+      $("depthTag").textContent = `Depth ${state.depth}`;
+
+      const subtitleByAudience = {
+        reviewer: "Reviewer-oriented path through architecture, features, data, and quality.",
+        developer: "Developer onboarding path with concrete files, flows, and practice tasks.",
+        product: "Product-facing path through user journeys, states, and polished interactions."
+      };
+      $("tutorialSubtitle").textContent = subtitleByAudience[state.audience];
+
+      const activeSections = ["showTech", "showFeatures", "showData", "showQuality", "showUx"].filter(key => state[key]);
+      $("metrics").innerHTML = [
+        ["Sections", activeSections.length],
+        ["Steps", stepsForFocus().length],
+        ["Files", state.paths ? "Shown" : "Hidden"]
+      ].map(([label, value]) => `<div class="metric"><strong>${value}</strong><span class="small">${label}</span></div>`).join("");
+
+      renderSteps();
+      renderDiagram();
+      renderRequirements(activeSections);
+      renderPresets();
+      $("depthValue").textContent = state.depth;
+    }
+
+    function stepsForFocus() {
+      const steps = baseSteps[state.focus] || baseSteps.full;
+      if (state.depth <= 2) return steps.slice(0, 3);
+      if (state.depth === 3) return steps;
+      if (!state.exercises) return steps;
+      return steps.concat([
+        ["Practice task", "Ask the reader to trace one request from UI interaction to reducer update and mocked repository response.", "src/features"],
+        ["Review task", "Ask the reader to identify one edge case per feature and point to the file that handles it.", "src/test"]
+      ]);
+    }
+
+    function renderSteps() {
+      const html = stepsForFocus().map((step, index) => {
+        const [title, body, file] = step;
+        return `<div class="step ${index === 0 ? "active" : ""}">
+          <div class="num">${index + 1}</div>
+          <div>
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(body)}</p>
+            ${state.paths ? `<div class="file">${escapeHtml(file)}</div>` : ""}
+          </div>
+        </div>`;
+      }).join("");
+      $("stepList").innerHTML = html;
+    }
+
+    function renderDiagram() {
+      const svg = $("diagram");
+      const active = new Set(focusNodes[state.focus]);
+      const edgeMarkup = state.edges ? edges.map(([from, to, type]) => {
+        const a = nodes.find(node => node.id === from);
+        const b = nodes.find(node => node.id === to);
+        const x1 = a.x + a.w / 2;
+        const y1 = a.y + a.h;
+        const x2 = b.x + b.w / 2;
+        const y2 = b.y;
+        const midY = (y1 + y2) / 2;
+        return `<path class="edge ${type}" d="M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}" marker-end="url(#arrow-${type})"></path>`;
+      }).join("") : "";
+
+      const nodeMarkup = nodes.map(node => {
+        const isActive = active.has(node.id);
+        const opacity = isActive ? 1 : 0.36;
+        return `<g class="node ${isActive ? "active" : ""}" opacity="${opacity}" transform="translate(${node.x}, ${node.y})">
+          <rect width="${node.w}" height="${node.h}"></rect>
+          <text x="14" y="25">${escapeHtml(node.label)}</text>
+          ${state.paths ? `<text class="sub" x="14" y="45">${escapeHtml(shortFile(node.file))}</text>` : ""}
+        </g>`;
+      }).join("");
+
+      svg.innerHTML = `<defs>
+        <marker id="arrow-data" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#8bb8ff"></path></marker>
+        <marker id="arrow-state" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#7dd3c7"></path></marker>
+        <marker id="arrow-rules" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#f4b860"></path></marker>
+      </defs>${edgeMarkup}${nodeMarkup}`;
+    }
+
+    function renderRequirements(activeSections) {
+      const requirements = activeSections.flatMap(key => {
+        if (key === "showTech") return ["React Native", "TypeScript", "Styled Components", "Redux Toolkit", "Redux Saga"];
+        if (key === "showFeatures") return ["Product list", "Pagination", "Search", "Filtering", "Sorting", "Product details", "Add to cart", "Cart editing", "Checkout"];
+        if (key === "showData") return ["Frontend only", "Mock API requests", "Artificial delay", "Large dataset shape"];
+        if (key === "showQuality") return ["Clean Architecture", "Data modeling", "Business logic", "Performance", "Strict typing", "Edge cases"];
+        return ["Product thinking", "Loading states", "Empty states", "Error recovery", "Visual design"];
+      });
+
+      $("requirements").innerHTML = requirements.map((item, index) => {
+        const dotClass = index % 7 === 0 && state.depth < 3 ? "warn" : "";
+        return `<div class="req"><span class="dot ${dotClass}"></span><span>${escapeHtml(item)}</span></div>`;
+      }).join("");
+    }
+
+    function renderPresets() {
+      document.querySelectorAll(".preset").forEach(button => {
+        button.classList.toggle("active", button.dataset.preset === state.preset);
+      });
+    }
+
+    function updatePrompt() {
+      const sections = ["showTech", "showFeatures", "showData", "showQuality", "showUx"].filter(key => state[key]);
+      const sectionText = sections.map(key => `${sectionCopy[key].title}: ${sectionCopy[key].text}`).join("\n");
+      const focusLine = state.focus === DEFAULTS.focus
+        ? "Create a complete walkthrough tutorial for the MyBites Marketplace project."
+        : `Create a walkthrough tutorial for the MyBites Marketplace project focused on ${labels[state.focus].toLowerCase()}.`;
+      const audienceLine = state.audience === DEFAULTS.audience
+        ? "Write it for a technical reviewer."
+        : `Write it for a ${labels[state.audience].toLowerCase()}.`;
+      const depthLine = state.depth === DEFAULTS.depth
+        ? "Use a balanced level of detail."
+        : state.depth >= 4
+          ? "Use a deep, implementation-level explanation with concrete file references."
+          : "Keep the explanation concise and high-level.";
+      const pathLine = state.paths ? "Include concrete project file paths for each major concept." : "Avoid file-path-heavy detail unless it is necessary.";
+      const edgeLine = state.edges ? "Explain how the app shell, navigation, features, Redux store, sagas, repositories, mock API, domain rules, and UI layer connect." : "Focus on the tutorial sequence rather than drawing architecture connections.";
+      const exerciseLine = state.exercises ? "Add practical trace exercises and review checkpoints after the walkthrough." : "Do not add extra practice tasks.";
+      const custom = state.note ? `\nAdditional instruction: ${state.note}` : "";
+
+      $("promptOutput").textContent = `${focusLine}
+${audienceLine}
+${depthLine}
+${pathLine}
+${edgeLine}
+${exerciseLine}
+
+Cover these requirement groups from the project report:
+${sectionText}
+
+Project context: this is an Expo React Native marketplace app using TypeScript, styled-components/native, Redux Toolkit, redux-saga, mocked frontend-only API calls with artificial delay, feature-based Clean Architecture, typed domain models, pagination/search/filter/sort catalog behavior, product details, cart management, and checkout.
+${custom}`;
+    }
+
+    function updateAll() {
+      renderPreview();
+      updatePrompt();
+    }
+
+    function shortFile(file) {
+      if (file.length <= 24) return file;
+      return file.replace("src/features/", "features/").replace("src/", "");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    bindControls();
+    syncControls();
+    updateAll();
+  </script>
+</body>
+</html>

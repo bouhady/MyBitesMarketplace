@@ -1,6 +1,6 @@
-import type { RootState } from '../../src/app/store/rootReducer';
-import { selectCartItemsWithProducts, selectCartPricing } from '../../src/features/cart/state/cartSelectors';
-import { cartItemFactory } from '../../src/test/factories/cartFactory';
+import type { RootState } from '../../app/store/rootReducer';
+import { selectCartItemsWithProducts, selectCartPricing } from '../../features/cart/state/cartSelectors';
+import { cartItemFactory } from '../factories/cartFactory';
 
 describe('selectCartItemsWithProducts (bug reproduction)', () => {
   it('filters out cart entries without loaded product entities while pricing still counts totalItems', () => {

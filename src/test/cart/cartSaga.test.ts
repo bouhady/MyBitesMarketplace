@@ -1,11 +1,11 @@
 import { runSaga, stdChannel } from 'redux-saga';
 import type { UnknownAction } from '@reduxjs/toolkit';
-import { cartActions } from '../../src/features/cart/state/cartSlice';
-import { cartSaga } from '../../src/features/cart/state/cartSaga';
-import { CartPersistenceRepository } from '../../src/data/repositories/CartPersistenceRepository';
-import type { RootState } from '../../src/app/store/rootReducer';
-import { cartItemFactory } from '../../src/test/factories/cartFactory';
-import { productFactory } from '../../src/test/factories/productFactory';
+import { cartActions } from '../../features/cart/state/cartSlice';
+import { cartSaga } from '../../features/cart/state/cartSaga';
+import { CartPersistenceRepository } from '../../data/repositories/CartPersistenceRepository';
+import type { RootState } from '../../app/store/rootReducer';
+import { cartItemFactory } from '../factories/cartFactory';
+import { productFactory } from '../factories/productFactory';
 
 const emptyState: RootState = {
   catalog: {
