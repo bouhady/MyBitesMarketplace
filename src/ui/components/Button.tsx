@@ -9,6 +9,7 @@ interface ButtonProps extends PressableProps {
   variant?: ButtonVariant;
   loading?: boolean;
   icon?: ReactNode;
+  badge?: string | number | undefined;
 }
 
 const ButtonFrame = styled(Pressable)<{ variant: ButtonVariant; disabledState: boolean }>(({ theme, variant, disabledState }) => {
@@ -34,9 +35,30 @@ const ButtonLabel = styled.Text<{ variant: ButtonVariant }>(({ theme, variant })
   color: variant === 'primary' || variant === 'danger' ? theme.colors.accentText : theme.colors.textPrimary
 }));
 
-export const Button = memo(({ label, variant = 'primary', loading = false, disabled = false, icon, ...props }: ButtonProps) => (
+const Badge = styled.View(({ theme }) => ({
+  minWidth: 22,
+  height: 22,
+  paddingHorizontal: theme.spacing.xs,
+  borderRadius: 11,
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: theme.colors.accent
+}));
+
+const BadgeLabel = styled.Text(({ theme }) => ({
+  ...theme.typography.caption,
+  color: theme.colors.accentText,
+  fontWeight: '700'
+}));
+
+export const Button = memo(({ label, variant = 'primary', loading = false, disabled = false, icon, badge, ...props }: ButtonProps) => (
   <ButtonFrame accessibilityRole="button" variant={variant} disabledState={disabled || loading} disabled={disabled || loading} {...props}>
     {loading ? <ActivityIndicator color={variant === 'secondary' ? '#1F2421' : '#FFFFFF'} /> : icon}
     <ButtonLabel variant={variant}>{label}</ButtonLabel>
+    {!loading && badge !== undefined && badge !== null ? (
+      <Badge>
+        <BadgeLabel>{badge}</BadgeLabel>
+      </Badge>
+    ) : null}
   </ButtonFrame>
 ));

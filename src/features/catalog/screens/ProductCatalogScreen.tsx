@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import styled from 'styled-components/native';
 import type { Product } from '../../../domain/entities/Product';
+import { useAppSelector } from '../../../app/store/store';
 import { Screen, ScreenContent } from '../../../ui/components/Screen';
 import { TitleText } from '../../../ui/components/Text';
 import { ErrorState } from '../../../ui/components/ErrorState';
@@ -15,6 +16,7 @@ import { SortMenu } from '../components/SortMenu';
 import { ProductGrid } from '../components/ProductGrid';
 import { CatalogSkeleton } from '../components/CatalogSkeleton';
 import { Button } from '../../../ui/components/Button';
+import { selectCartTotalItems } from '../../cart/state/cartSelectors';
 
 type Props = NativeStackScreenProps<RootStackParamList, typeof routes.catalog>;
 
@@ -32,6 +34,7 @@ const HeaderRow = styled.View({
 export const ProductCatalogScreen = ({ navigation }: Props) => {
   const catalog = useCatalog();
   const filters = useProductFilters();
+  const cartTotalItems = useAppSelector(selectCartTotalItems);
 
   const openProduct = useCallback(
     (product: Product) => {
@@ -53,7 +56,13 @@ export const ProductCatalogScreen = ({ navigation }: Props) => {
         <Header>
           <HeaderRow>
             <TitleText>Marketplace</TitleText>
-            <Button label="Cart" variant="secondary" onPress={openCart} />
+            <Button
+              label="Cart"
+              variant="secondary"
+              badge={cartTotalItems > 0 ? cartTotalItems : undefined}
+              accessibilityLabel={`Cart, ${cartTotalItems} ${cartTotalItems === 1 ? 'item' : 'items'}`}
+              onPress={openCart}
+            />
           </HeaderRow>
           <SearchBar value={catalog.query} onChangeText={catalog.setQuery} />
           <CategoryChips

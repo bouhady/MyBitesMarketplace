@@ -10,9 +10,23 @@ const Wrapper = styled.View(({ theme }) => ({
   padding: theme.spacing.xl
 }));
 
+const EmptyTitle = styled(SubtitleText)({
+  width: '100%',
+  flexShrink: 1,
+  textAlign: 'center',
+  writingDirection: 'ltr'
+});
+
+const EmptyMessage = styled(BodyText)({
+  width: '100%',
+  flexShrink: 1,
+  textAlign: 'center',
+  writingDirection: 'ltr'
+});
+
 export const EmptyCartState = () => (
   <Wrapper>
-    <SubtitleText>Your cart is empty</SubtitleText>
-    <BodyText>Add products from the marketplace.</BodyText>
+    <EmptyTitle>Your cart is empty</EmptyTitle>
+    <EmptyMessage>Add products from the marketplace.</EmptyMessage>
   </Wrapper>
 );
