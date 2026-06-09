@@ -23,7 +23,10 @@ export const calculateCartPricing = (
     return product ? sum + product.price.amount * item.quantity : sum;
   }, 0);
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = items.reduce((sum, item) => {
+    const product = productsById[item.productId];
+    return product ? sum + item.quantity : sum;
+  }, 0);
   const discountAmount = subtotalAmount >= BULK_DISCOUNT_THRESHOLD ? subtotalAmount * BULK_DISCOUNT_RATE : 0;
   const taxableAmount = subtotalAmount - discountAmount;
   const taxAmount = taxableAmount * TAX_RATE;
