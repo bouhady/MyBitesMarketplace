@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { Category } from '../../../domain/entities/Category';
 import type { CategoryId, Product, ProductId } from '../../../domain/entities/Product';
 import { defaultProductSort, type ProductSort } from '../../../domain/valueObjects/Sort';
-import type { CatalogRequestMode, CatalogState } from './catalogTypes';
+import type { CatalogRequestMode, CatalogRequestSignature, CatalogState } from './catalogTypes';
 
 interface CatalogPagePayload {
   products: Product[];
@@ -12,7 +12,32 @@ interface CatalogPagePayload {
   total: number;
   hasMore: boolean;
   mode: CatalogRequestMode;
+  requestSignature: CatalogRequestSignature;
 }
+
+interface CatalogFailurePayload {
+  error: string;
+  requestSignature: CatalogRequestSignature;
+}
+
+interface CatalogRequestSnapshot {
+  page: number;
+  limit: number;
+  query: string;
+  categoryId: CategoryId | null;
+  sort: ProductSort;
+}
+
+export const createCatalogRequestSignature = (request: CatalogRequestSnapshot): CatalogRequestSignature =>
+  JSON.stringify(request);
+
+const selectNextRequestSnapshot = (state: CatalogState, mode: CatalogRequestMode): CatalogRequestSnapshot => ({
+  page: mode === 'loadMore' ? state.page + 1 : 1,
+  limit: state.limit,
+  query: state.debouncedQuery,
+  categoryId: state.selectedCategoryId,
+  sort: state.sort
+});
 
 const initialState: CatalogState = {
   ids: [],
@@ -27,7 +52,10 @@ const initialState: CatalogState = {
   selectedCategoryId: null,
   sort: defaultProductSort,
   status: 'idle',
-  error: null
+  error: null,
+  activeRequestSignature: null,
+  productDetailsStatusById: {},
+  productDetailsErrorById: {}
 };
 
 const upsertProducts = (state: CatalogState, products: Product[], replace: boolean): void => {
@@ -50,6 +78,7 @@ export const catalogSlice = createSlice({
   reducers: {
     catalogRequested(state, action: PayloadAction<CatalogRequestMode>) {
       state.error = null;
+      state.activeRequestSignature = createCatalogRequestSignature(selectNextRequestSnapshot(state, action.payload));
       if (action.payload === 'refresh') {
         state.status = 'refreshing';
       } else if (action.payload === 'loadMore') {
@@ -59,6 +88,9 @@ export const catalogSlice = createSlice({
       }
     },
     catalogPageLoaded(state, action: PayloadAction<CatalogPagePayload>) {
+      if (state.activeRequestSignature !== action.payload.requestSignature) {
+        return;
+      }
       const shouldReplace = action.payload.mode !== 'loadMore';
       upsertProducts(state, action.payload.products, shouldReplace);
       state.categories = action.payload.categories;
@@ -68,10 +100,15 @@ export const catalogSlice = createSlice({
       state.hasMore = action.payload.hasMore;
       state.status = 'success';
       state.error = null;
+      state.activeRequestSignature = null;
     },
-    catalogFailed(state, action: PayloadAction<string>) {
+    catalogFailed(state, action: PayloadAction<CatalogFailurePayload>) {
+      if (state.activeRequestSignature !== action.payload.requestSignature) {
+        return;
+      }
       state.status = 'error';
-      state.error = action.payload;
+      state.error = action.payload.error;
+      state.activeRequestSignature = null;
     },
     searchQueryChanged(state, action: PayloadAction<string>) {
       state.query = action.payload;
@@ -99,10 +136,31 @@ export const catalogSlice = createSlice({
       }
     },
     productDetailsRequested: {
-      reducer() {},
+      reducer(state, action: PayloadAction<ProductId>) {
+        if (state.entities[action.payload]) {
+          state.productDetailsStatusById[action.payload] = 'success';
+          state.productDetailsErrorById[action.payload] = null;
+          return;
+        }
+        state.productDetailsStatusById[action.payload] = 'loading';
+        state.productDetailsErrorById[action.payload] = null;
+      },
       prepare(productId: ProductId) {
         return { payload: productId };
       }
+    },
+    productDetailsLoaded(state, action: PayloadAction<Product>) {
+      const product = action.payload;
+      state.entities[product.id] = product;
+      if (!state.ids.includes(product.id)) {
+        state.ids.push(product.id);
+      }
+      state.productDetailsStatusById[product.id] = 'success';
+      state.productDetailsErrorById[product.id] = null;
+    },
+    productDetailsFailed(state, action: PayloadAction<{ productId: ProductId; error: string }>) {
+      state.productDetailsStatusById[action.payload.productId] = 'error';
+      state.productDetailsErrorById[action.payload.productId] = action.payload.error;
     }
   }
 });

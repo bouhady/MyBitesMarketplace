@@ -22,7 +22,10 @@ describe('checkoutSaga', () => {
         selectedCategoryId: null,
         sort: 'rating_desc',
         status: 'success',
-        error: null
+        error: null,
+        activeRequestSignature: null,
+        productDetailsStatusById: {},
+        productDetailsErrorById: {}
       },
       cart: { itemsByProductId: {}, hydrationStatus: 'idle', hydrationError: null },
       checkout: { status: 'idle', latestOrderId: null, error: null }

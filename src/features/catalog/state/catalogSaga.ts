@@ -3,7 +3,7 @@ import type { SagaIterator } from 'redux-saga';
 import { ProductRepository } from '../../../data/repositories/ProductRepository';
 import type { ProductListResponse } from '../../../data/api/marketplaceApi.types';
 import type { RootState } from '../../../app/store/rootReducer';
-import { catalogActions } from './catalogSlice';
+import { catalogActions, createCatalogRequestSignature } from './catalogSlice';
 import type { CatalogRequestMode } from './catalogTypes';
 
 const selectCatalogRequest = (state: RootState, mode: CatalogRequestMode) => {
@@ -27,6 +27,7 @@ function* requestCatalog(action: ReturnType<typeof catalogActions.catalogRequest
 
   try {
     const request: ReturnType<typeof selectCatalogRequest> = yield select(selectCatalogRequest, mode);
+    const requestSignature = createCatalogRequestSignature(request);
     const response: ProductListResponse = yield call(ProductRepository.listProducts, request);
     yield put(
       catalogActions.catalogPageLoaded({
@@ -36,11 +37,18 @@ function* requestCatalog(action: ReturnType<typeof catalogActions.catalogRequest
         limit: response.limit,
         total: response.total,
         hasMore: response.hasMore,
-        mode
+        mode,
+        requestSignature
       })
     );
   } catch (error: unknown) {
-    yield put(catalogActions.catalogFailed(error instanceof Error ? error.message : 'Unable to load products.'));
+    const request: ReturnType<typeof selectCatalogRequest> = yield select(selectCatalogRequest, mode);
+    yield put(
+      catalogActions.catalogFailed({
+        error: error instanceof Error ? error.message : 'Unable to load products.',
+        requestSignature: createCatalogRequestSignature(request)
+      })
+    );
   }
 }
 
@@ -65,10 +73,17 @@ function* requestProductDetails(action: ReturnType<typeof catalogActions.product
       action.payload
     );
     if (product) {
-      yield put(catalogActions.productUpserted(product));
+      yield put(catalogActions.productDetailsLoaded(product));
+    } else {
+      yield put(catalogActions.productDetailsFailed({ productId: action.payload, error: 'Product not found.' }));
     }
   } catch (error: unknown) {
-    yield put(catalogActions.catalogFailed(error instanceof Error ? error.message : 'Unable to load product.'));
+    yield put(
+      catalogActions.productDetailsFailed({
+        productId: action.payload,
+        error: error instanceof Error ? error.message : 'Unable to load product.'
+      })
+    );
   }
 }
 

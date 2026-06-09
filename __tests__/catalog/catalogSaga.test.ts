@@ -19,7 +19,10 @@ const baseState: RootState = {
     selectedCategoryId: null,
     sort: 'rating_desc',
     status: 'idle',
-    error: null
+    error: null,
+    activeRequestSignature: null,
+    productDetailsStatusById: {},
+    productDetailsErrorById: {}
   },
   cart: { itemsByProductId: {}, hydrationStatus: 'idle', hydrationError: null },
   checkout: { status: 'idle', latestOrderId: null, error: null }
@@ -63,5 +66,31 @@ describe('catalogSaga', () => {
     expect(listSpy).not.toHaveBeenCalledWith(expect.objectContaining({ query: 'co' }));
     listSpy.mockRestore();
     jest.useRealTimers();
+  });
+
+  it('dispatches product detail failure without failing the catalog list', async () => {
+    const channel = stdChannel();
+    const dispatched: UnknownAction[] = [];
+    const getProductSpy = jest.spyOn(ProductRepository, 'getProductById').mockResolvedValue(null);
+
+    const task = runSaga(
+      {
+        channel,
+        dispatch: (action: UnknownAction) => dispatched.push(action),
+        getState: () => baseState
+      },
+      catalogSaga
+    );
+
+    channel.put(catalogActions.productDetailsRequested('missing-product'));
+    await Promise.resolve();
+
+    expect(dispatched).toContainEqual(
+      catalogActions.productDetailsFailed({ productId: 'missing-product', error: 'Product not found.' })
+    );
+    expect(dispatched.some(catalogActions.catalogFailed.match)).toBe(false);
+
+    task.cancel();
+    getProductSpy.mockRestore();
   });
 });

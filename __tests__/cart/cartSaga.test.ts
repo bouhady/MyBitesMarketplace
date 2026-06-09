@@ -20,7 +20,10 @@ const emptyState: RootState = {
     selectedCategoryId: null,
     sort: 'rating_desc',
     status: 'success',
-    error: null
+    error: null,
+    activeRequestSignature: null,
+    productDetailsStatusById: {},
+    productDetailsErrorById: {}
   },
   cart: {
     itemsByProductId: {},

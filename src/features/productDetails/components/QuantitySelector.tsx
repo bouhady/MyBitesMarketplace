@@ -28,10 +28,22 @@ const QuantityBox = styled.View(({ theme }) => ({
 
 export const QuantitySelector = memo(({ quantity, max, onChange }: QuantitySelectorProps) => (
   <Row>
-    <Button label="-" variant="secondary" disabled={quantity <= 1} onPress={() => onChange(Math.max(1, quantity - 1))} />
+    <Button
+      label="-"
+      variant="secondary"
+      accessibilityLabel="Decrease quantity"
+      disabled={quantity <= 1}
+      onPress={() => onChange(Math.max(1, quantity - 1))}
+    />
     <QuantityBox>
       <BodyText>{quantity}</BodyText>
     </QuantityBox>
-    <Button label="+" variant="secondary" disabled={quantity >= max} onPress={() => onChange(Math.min(max, quantity + 1))} />
+    <Button
+      label="+"
+      variant="secondary"
+      accessibilityLabel="Increase quantity"
+      disabled={quantity >= max}
+      onPress={() => onChange(Math.min(max, quantity + 1))}
+    />
   </Row>
 ));

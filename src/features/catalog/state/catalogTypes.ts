@@ -3,6 +3,8 @@ import type { CategoryId, Product, ProductId } from '../../../domain/entities/Pr
 import type { ProductSort } from '../../../domain/valueObjects/Sort';
 import type { AsyncStatus } from '../../../shared/types/AsyncStatus';
 
+export type CatalogRequestSignature = string;
+
 export interface CatalogState {
   ids: ProductId[];
   entities: Record<ProductId, Product>;
@@ -17,6 +19,9 @@ export interface CatalogState {
   sort: ProductSort;
   status: AsyncStatus;
   error: string | null;
+  activeRequestSignature: CatalogRequestSignature | null;
+  productDetailsStatusById: Partial<Record<ProductId, AsyncStatus>>;
+  productDetailsErrorById: Partial<Record<ProductId, string | null>>;
 }
 
 export type CatalogRequestMode = 'initial' | 'refresh' | 'loadMore';

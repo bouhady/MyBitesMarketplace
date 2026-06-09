@@ -11,6 +11,7 @@ import { Screen, ScreenContent } from '../../../ui/components/Screen';
 import { BodyText, CaptionText, SubtitleText, TitleText } from '../../../ui/components/Text';
 import { LoadingOverlay } from '../../../ui/components/LoadingOverlay';
 import { Button } from '../../../ui/components/Button';
+import { ErrorState } from '../../../ui/components/ErrorState';
 import { formatMoney } from '../../../shared/utils/formatMoney';
 import { useProductDetails } from '../hooks/useProductDetails';
 import { ProductImageCarousel } from '../components/ProductImageCarousel';
@@ -30,7 +31,7 @@ const Price = styled(TitleText)(({ theme }) => ({
 
 export const ProductDetailsScreen = ({ route, navigation }: Props) => {
   const dispatch = useAppDispatch();
-  const { product } = useProductDetails(route.params.productId);
+  const { product, status, error, retry } = useProductDetails(route.params.productId);
   const maxQuantity = product?.stock.available ?? 0;
   const [quantity, setQuantity] = useState(1);
 
@@ -44,10 +45,29 @@ export const ProductDetailsScreen = ({ route, navigation }: Props) => {
     navigation.navigate(routes.cart);
   }, [dispatch, navigation, product, quantity]);
 
-  if (!product) {
+  const openCart = useCallback(() => {
+    navigation.navigate(routes.cart);
+  }, [navigation]);
+
+  const backToCatalog = useCallback(() => {
+    navigation.navigate(routes.catalog);
+  }, [navigation]);
+
+  if (!product && (status === 'idle' || status === 'loading')) {
     return (
       <Screen>
         <LoadingOverlay label="Loading product" />
+      </Screen>
+    );
+  }
+
+  if (!product) {
+    return (
+      <Screen>
+        <ScreenContent>
+          <ErrorState title="Product unavailable" message={error ?? 'This product could not be found.'} onRetry={retry} />
+          <Button label="Back to catalog" variant="secondary" onPress={backToCatalog} />
+        </ScreenContent>
       </Screen>
     );
   }
@@ -64,7 +84,7 @@ export const ProductDetailsScreen = ({ route, navigation }: Props) => {
             <CaptionText>{product.rating.average.toFixed(1)} rating from {product.rating.count} reviews</CaptionText>
             <BodyText>{product.description}</BodyText>
             <AddToCartPanel quantity={quantity} max={maxQuantity} onQuantityChange={setQuantity} onAdd={addToCart} />
-            <Button label="View cart" variant="secondary" onPress={() => navigation.navigate(routes.cart)} />
+            <Button label="View cart" variant="secondary" onPress={openCart} />
           </Content>
         </ScrollView>
       </ScreenContent>

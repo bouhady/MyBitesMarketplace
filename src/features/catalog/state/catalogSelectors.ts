@@ -10,6 +10,8 @@ export const selectCatalogCategories = createSelector(selectCatalogState, (catal
 export const selectSelectedCategoryId = createSelector(selectCatalogState, (catalog) => catalog.selectedCategoryId);
 export const selectCatalogSort = createSelector(selectCatalogState, (catalog) => catalog.sort);
 export const selectHasMoreProducts = createSelector(selectCatalogState, (catalog) => catalog.hasMore);
+export const selectProductDetailsStatusById = createSelector(selectCatalogState, (catalog) => catalog.productDetailsStatusById);
+export const selectProductDetailsErrorById = createSelector(selectCatalogState, (catalog) => catalog.productDetailsErrorById);
 
 export const selectCatalogProducts = createSelector(selectCatalogState, (catalog) =>
   catalog.ids.map((id) => catalog.entities[id]).filter((product) => product !== undefined)
@@ -17,3 +19,9 @@ export const selectCatalogProducts = createSelector(selectCatalogState, (catalog
 
 export const selectProductById = (productId: string) =>
   createSelector(selectProductEntities, (entities) => entities[productId] ?? null);
+
+export const selectProductDetailsStatus = (productId: string) =>
+  createSelector(selectProductDetailsStatusById, (statusById) => statusById[productId] ?? 'idle');
+
+export const selectProductDetailsError = (productId: string) =>
+  createSelector(selectProductDetailsErrorById, (errorById) => errorById[productId] ?? null);

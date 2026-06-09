@@ -22,11 +22,11 @@ const Count = styled.View(({ theme }) => ({
 export const QuantityStepper = memo(
   ({ quantity, canIncrement, onIncrement, onDecrement }: { quantity: number; canIncrement: boolean; onIncrement: () => void; onDecrement: () => void }) => (
     <Row>
-      <Button label="-" variant="secondary" onPress={onDecrement} />
+      <Button label="-" variant="secondary" accessibilityLabel="Decrease quantity" onPress={onDecrement} />
       <Count>
         <BodyText>{quantity}</BodyText>
       </Count>
-      <Button label="+" variant="secondary" disabled={!canIncrement} onPress={onIncrement} />
+      <Button label="+" variant="secondary" accessibilityLabel="Increase quantity" disabled={!canIncrement} onPress={onIncrement} />
     </Row>
   )
 );
