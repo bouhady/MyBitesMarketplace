@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "MyBites Marketplace",
+    "slug": "my-bites-marketplace",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#f7f5ef"
+      }
+    }
+  }
+}
