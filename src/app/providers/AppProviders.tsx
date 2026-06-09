@@ -1,15 +1,15 @@
 import React, { type ReactNode } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StoreProvider } from './StoreProvider';
 import { ThemeProvider } from './ThemeProvider';
 import { NavigationProvider } from './NavigationProvider';
+import { Root } from './Root';
 
 export const AppProviders = ({ children }: { children: ReactNode }) => (
-  <GestureHandlerRootView style={{ flex: 1 }}>
+  <Root>
     <ThemeProvider>
       <StoreProvider>
         <NavigationProvider>{children}</NavigationProvider>
       </StoreProvider>
     </ThemeProvider>
-  </GestureHandlerRootView>
+  </Root>
 );

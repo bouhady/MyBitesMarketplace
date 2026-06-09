@@ -1,5 +1,5 @@
 import React, { type ErrorInfo, type ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import styled from 'styled-components/native';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -9,6 +9,44 @@ interface ErrorBoundaryState {
   hasError: boolean;
 }
 
+const Container = styled.View(({ theme }) => ({
+  flex: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 24,
+  backgroundColor: theme.colors.background,
+  gap: theme.spacing.md
+}));
+
+const Title = styled.Text(({ theme }) => ({
+  color: theme.colors.textPrimary,
+  fontSize: 22,
+  fontWeight: '700',
+  textAlign: 'center'
+}));
+
+const Message = styled.Text(({ theme }) => ({
+  color: theme.colors.textSecondary,
+  fontSize: 16,
+  lineHeight: 22,
+  textAlign: 'center'
+}));
+
+const RetryButton = styled.TouchableOpacity(({ theme }) => ({
+  minHeight: 48,
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 12,
+  paddingHorizontal: 20,
+  backgroundColor: theme.colors.accent
+}));
+
+const ButtonLabel = styled.Text(({ theme }) => ({
+  color: theme.colors.accentText,
+  fontSize: 16,
+  fontWeight: '700'
+}));
+
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { hasError: false };
 
@@ -17,6 +55,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Keep console.error for local debugging; replace with reporting integration if available
     console.error('Unhandled app error', error, errorInfo);
   }
 
@@ -28,13 +67,13 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     return (
       <>
         {this.state.hasError ? (
-          <View style={styles.container}>
-            <Text style={styles.title}>Something went wrong</Text>
-            <Text style={styles.message}>The marketplace hit an unexpected issue. Try reloading the app view.</Text>
-            <Pressable accessibilityRole="button" onPress={this.reset} style={styles.button}>
-              <Text style={styles.buttonLabel}>Try again</Text>
-            </Pressable>
-          </View>
+          <Container>
+            <Title>Something went wrong</Title>
+            <Message>The marketplace hit an unexpected issue. Try reloading the app view.</Message>
+            <RetryButton accessibilityRole="button" onPress={this.reset}>
+              <ButtonLabel>Try again</ButtonLabel>
+            </RetryButton>
+          </Container>
         ) : (
           this.props.children
         )}
@@ -42,39 +81,3 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: '#F7F5EF',
-    gap: 16
-  },
-  title: {
-    color: '#1F2421',
-    fontSize: 22,
-    fontWeight: '700',
-    textAlign: 'center'
-  },
-  message: {
-    color: '#5C625D',
-    fontSize: 16,
-    lineHeight: 22,
-    textAlign: 'center'
-  },
-  button: {
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    backgroundColor: '#3D7C59'
-  },
-  buttonLabel: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700'
-  }
-});
