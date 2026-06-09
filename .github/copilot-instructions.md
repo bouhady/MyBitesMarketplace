@@ -44,6 +44,7 @@ Use this file as the rulebook for future AI-assisted changes. Follow the current
 - Use `Button`, `Text`, `Chip`, `ErrorState`, `LoadingOverlay`, and `Divider` from `src/ui/components`.
 - Quantity buttons must keep accessible labels: `Decrease quantity` and `Increase quantity`.
 - Use stable `useCallback` handlers when callbacks are passed into memoized children.
+- Components must use a single render return. Put state branches inside the main returned JSX, for example `{cart.isEmpty ? <EmptyCartState /> : <ScreenContent>...</ScreenContent>}`, instead of using multiple conditional component returns.
 
 ## Redux And Saga Rules
 

@@ -25,18 +25,20 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   };
 
   render() {
-    if (!this.state.hasError) {
-      return this.props.children;
-    }
-
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Something went wrong</Text>
-        <Text style={styles.message}>The marketplace hit an unexpected issue. Try reloading the app view.</Text>
-        <Pressable accessibilityRole="button" onPress={this.reset} style={styles.button}>
-          <Text style={styles.buttonLabel}>Try again</Text>
-        </Pressable>
-      </View>
+      <>
+        {this.state.hasError ? (
+          <View style={styles.container}>
+            <Text style={styles.title}>Something went wrong</Text>
+            <Text style={styles.message}>The marketplace hit an unexpected issue. Try reloading the app view.</Text>
+            <Pressable accessibilityRole="button" onPress={this.reset} style={styles.button}>
+              <Text style={styles.buttonLabel}>Try again</Text>
+            </Pressable>
+          </View>
+        ) : (
+          this.props.children
+        )}
+      </>
     );
   }
 }

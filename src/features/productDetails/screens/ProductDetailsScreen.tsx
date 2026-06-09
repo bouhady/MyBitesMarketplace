@@ -53,41 +53,33 @@ export const ProductDetailsScreen = ({ route, navigation }: Props) => {
     navigation.navigate(routes.catalog);
   }, [navigation]);
 
-  if (!product && (status === 'idle' || status === 'loading')) {
-    return (
-      <Screen>
+  return (
+    <Screen>
+      {product ? (
+        <ScreenContent>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Content>
+              <ProductImageCarousel urls={galleryUrls} />
+              <StockBadge available={product.stock.available} />
+              <SubtitleText>{product.title}</SubtitleText>
+              <Price>{formatMoney(product.price)}</Price>
+              <CaptionText>
+                {product.rating.average.toFixed(1)} rating from {product.rating.count} reviews
+              </CaptionText>
+              <BodyText>{product.description}</BodyText>
+              <AddToCartPanel quantity={quantity} max={maxQuantity} onQuantityChange={setQuantity} onAdd={addToCart} />
+              <Button label="View cart" variant="secondary" onPress={openCart} />
+            </Content>
+          </ScrollView>
+        </ScreenContent>
+      ) : status === 'idle' || status === 'loading' ? (
         <LoadingOverlay label="Loading product" />
-      </Screen>
-    );
-  }
-
-  if (!product) {
-    return (
-      <Screen>
+      ) : (
         <ScreenContent>
           <ErrorState title="Product unavailable" message={error ?? 'This product could not be found.'} onRetry={retry} />
           <Button label="Back to catalog" variant="secondary" onPress={backToCatalog} />
         </ScreenContent>
-      </Screen>
-    );
-  }
-
-  return (
-    <Screen>
-      <ScreenContent>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Content>
-            <ProductImageCarousel urls={galleryUrls} />
-            <StockBadge available={product.stock.available} />
-            <SubtitleText>{product.title}</SubtitleText>
-            <Price>{formatMoney(product.price)}</Price>
-            <CaptionText>{product.rating.average.toFixed(1)} rating from {product.rating.count} reviews</CaptionText>
-            <BodyText>{product.description}</BodyText>
-            <AddToCartPanel quantity={quantity} max={maxQuantity} onQuantityChange={setQuantity} onAdd={addToCart} />
-            <Button label="View cart" variant="secondary" onPress={openCart} />
-          </Content>
-        </ScrollView>
-      </ScreenContent>
+      )}
     </Screen>
   );
 };

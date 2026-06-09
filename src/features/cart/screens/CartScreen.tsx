@@ -26,36 +26,32 @@ export const CartScreen = ({ navigation }: Props) => {
     navigation.navigate(routes.checkout);
   }, [navigation]);
 
-  if (cart.isEmpty) {
-    return (
-      <Screen>
-        <EmptyCartState />
-      </Screen>
-    );
-  }
-
   return (
     <Screen>
-      <ScreenContent>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Content>
-            {cart.entries.map(({ item, product }) => (
-              <React.Fragment key={item.productId}>
-                <CartItemRow
-                  item={item}
-                  product={product}
-                  onIncrement={cart.increment}
-                  onDecrement={cart.decrement}
-                  onRemove={cart.remove}
-                />
-                <Divider />
-              </React.Fragment>
-            ))}
-            <CartSummary pricing={cart.pricing} />
-            <Button label="Checkout" onPress={checkout} />
-          </Content>
-        </ScrollView>
-      </ScreenContent>
+      {cart.isEmpty ? (
+        <EmptyCartState />
+      ) : (
+        <ScreenContent>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Content>
+              {cart.entries.map(({ item, product }) => (
+                <React.Fragment key={item.productId}>
+                  <CartItemRow
+                    item={item}
+                    product={product}
+                    onIncrement={cart.increment}
+                    onDecrement={cart.decrement}
+                    onRemove={cart.remove}
+                  />
+                  <Divider />
+                </React.Fragment>
+              ))}
+              <CartSummary pricing={cart.pricing} />
+              <Button label="Checkout" onPress={checkout} />
+            </Content>
+          </ScrollView>
+        </ScreenContent>
+      )}
     </Screen>
   );
 };
