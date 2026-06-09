@@ -6,3 +6,5 @@ export interface CartState {
   hydrationStatus: 'idle' | 'loading' | 'success' | 'error';
   hydrationError: string | null;
 }
+
+export type PersistableCartState = Pick<CartState, 'itemsByProductId'>;

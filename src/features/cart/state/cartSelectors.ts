@@ -6,6 +6,9 @@ import { selectProductEntities } from '../../catalog/state/catalogSelectors';
 export const selectCartState = (state: RootState) => state.cart;
 
 export const selectCartItems = createSelector(selectCartState, (cart) => Object.values(cart.itemsByProductId));
+export const selectPersistableCartState = createSelector(selectCartState, (cart) => ({
+  itemsByProductId: cart.itemsByProductId
+}));
 
 export const selectCartItemsWithProducts = createSelector(
   selectCartItems,

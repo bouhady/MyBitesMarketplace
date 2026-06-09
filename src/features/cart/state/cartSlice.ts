@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { Product } from '../../../domain/entities/Product';
+import type { Product, ProductId } from '../../../domain/entities/Product';
 import { clampCartQuantity } from '../../../domain/services/cartRules';
 import type { CartState } from './cartTypes';
 
@@ -7,6 +7,10 @@ interface AddToCartPayload {
   product: Product;
   quantity: number;
   addedAt: string;
+}
+
+interface ProductIdPayload {
+  productId: ProductId;
 }
 
 const initialState: CartState = {
@@ -49,23 +53,27 @@ export const cartSlice = createSlice({
       state.hydrationStatus = 'error';
       state.hydrationError = action.payload;
     },
-    incrementCartItem(state, action: PayloadAction<Product>) {
-      const product = action.payload;
-      const existing = state.itemsByProductId[product.id];
+    incrementCartItem: {
+      reducer() {},
+      prepare(payload: ProductIdPayload) {
+        return { payload };
+      }
+    },
+    cartItemIncremented(state, action: PayloadAction<ProductIdPayload & { maxQuantity: number }>) {
+      const existing = state.itemsByProductId[action.payload.productId];
       if (!existing) {
         return;
       }
-      existing.quantity = clampCartQuantity(existing.quantity + 1, product);
+      existing.quantity = Math.min(existing.quantity + 1, action.payload.maxQuantity);
     },
-    decrementCartItem(state, action: PayloadAction<Product>) {
-      const product = action.payload;
-      const existing = state.itemsByProductId[product.id];
+    decrementCartItem(state, action: PayloadAction<ProductIdPayload>) {
+      const existing = state.itemsByProductId[action.payload.productId];
       if (!existing) {
         return;
       }
       const nextQuantity = existing.quantity - 1;
       if (nextQuantity <= 0) {
-        delete state.itemsByProductId[product.id];
+        delete state.itemsByProductId[action.payload.productId];
         return;
       }
       existing.quantity = nextQuantity;

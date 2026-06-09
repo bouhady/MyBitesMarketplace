@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { CartState } from '../../features/cart/state/cartTypes';
+import type { CartState, PersistableCartState } from '../../features/cart/state/cartTypes';
 
 const CART_STORAGE_KEY = 'my-bites-marketplace:cart';
 type PersistedCartState = Pick<CartState, 'itemsByProductId'>;
@@ -55,7 +55,7 @@ export const CartPersistenceRepository = {
     return parseCartState(storedCart);
   },
 
-  async saveCart(cart: CartState): Promise<void> {
+  async saveCart(cart: PersistableCartState): Promise<void> {
     const persistedCart: PersistedCartState = {
       itemsByProductId: cart.itemsByProductId
     };

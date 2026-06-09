@@ -14,8 +14,16 @@ describe('cartSlice', () => {
   it('decrements to removal without corrupting other items', () => {
     const product = productFactory();
     const added = cartReducer(undefined, cartActions.addToCart({ product, quantity: 1, addedAt: 'now' }));
-    const removed = cartReducer(added, cartActions.decrementCartItem(product));
+    const removed = cartReducer(added, cartActions.decrementCartItem({ productId: product.id }));
 
     expect(removed.itemsByProductId[product.id]).toBeUndefined();
+  });
+
+  it('applies saga-approved increments with stock clamping data', () => {
+    const product = productFactory();
+    const added = cartReducer(undefined, cartActions.addToCart({ product, quantity: 1, addedAt: 'now' }));
+    const incremented = cartReducer(added, cartActions.cartItemIncremented({ productId: product.id, maxQuantity: 1 }));
+
+    expect(incremented.itemsByProductId[product.id]?.quantity).toBe(1);
   });
 });
