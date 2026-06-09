@@ -98,7 +98,12 @@ export const catalogSlice = createSlice({
         state.ids.push(product.id);
       }
     },
-    productDetailsRequested(_state, _action: PayloadAction<ProductId>) {}
+    productDetailsRequested: {
+      reducer() {},
+      prepare(productId: ProductId) {
+        return { payload: productId };
+      }
+    }
   }
 });
 

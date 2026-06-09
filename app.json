@@ -5,11 +5,21 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mybites.marketplace",
+      "buildNumber": "1"
     },
     "android": {
+      "package": "com.mybites.marketplace",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#f7f5ef"
       }
