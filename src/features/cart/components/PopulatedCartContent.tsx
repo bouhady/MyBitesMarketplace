@@ -8,7 +8,7 @@ import { ScreenContent } from '../../../ui/components/Screen';
 import { Button } from '../../../ui/components/Button';
 import { Divider } from '../../../ui/components/Divider';
 import { useCart } from '../hooks/useCart';
-import { CartItemRow } from './CartItemRow';
+import { CartItemRowActionBinder } from './CartItemRow';
 import { CartSummary } from './CartSummary';
 
 type Props = NativeStackScreenProps<RootStackParamList, typeof routes.cart>;
@@ -34,7 +34,7 @@ export const PopulatedCartContent = ({ navigation }: Props) => {
         estimatedItemSize={96}
         renderItem={({ item }) => (
           <React.Fragment key={item.item.productId}>
-            <CartItemRow
+            <CartItemRowActionBinder
               item={item.item}
               product={item.product}
               onIncrement={cart.increment}
