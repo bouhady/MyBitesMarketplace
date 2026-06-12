@@ -1,8 +1,8 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { ScrollView } from 'react-native';
 import type { Category } from '../../../domain/entities/Category';
 import type { CategoryId } from '../../../domain/entities/Product';
-import { Chip } from '../../../ui/components/Chip';
+import { ChipMemo } from '../../../ui/components/Chip';
 
 interface CategoryChipsProps {
   categories: Category[];
@@ -10,16 +10,45 @@ interface CategoryChipsProps {
   onSelectCategory: (categoryId: CategoryId | null) => void;
 }
 
-export const CategoryChips = memo(({ categories, selectedCategoryId, onSelectCategory }: CategoryChipsProps) => (
-  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-    <Chip label="All" selected={selectedCategoryId === null} onPress={() => onSelectCategory(null)} />
-    {categories.map((category) => (
-      <Chip
-        key={category.id}
-        label={category.name}
-        selected={selectedCategoryId === category.id}
-        onPress={() => onSelectCategory(category.id)}
+export const CategoryChips: React.FC<CategoryChipsProps> = (props) => {
+  const { categories, selectedCategoryId, onSelectCategory } = props;
+
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <CategoryChipBinder
+        label="All"
+        categoryId={null}
+        selected={selectedCategoryId === null}
+        onSelectCategory={onSelectCategory}
       />
-    ))}
-  </ScrollView>
-));
+      {categories.map((category) => (
+        <CategoryChipBinder
+          key={category.id}
+          label={category.name}
+          categoryId={category.id}
+          selected={selectedCategoryId === category.id}
+          onSelectCategory={onSelectCategory}
+        />
+      ))}
+    </ScrollView>
+  );
+};
+
+export const CategoryChipsMemo = memo(CategoryChips);
+
+interface CategoryChipBinderProps {
+  label: string;
+  categoryId: CategoryId | null;
+  selected: boolean;
+  onSelectCategory: (categoryId: CategoryId | null) => void;
+}
+
+export const CategoryChipBinder: React.FC<CategoryChipBinderProps> = (props) => {
+  const { label, categoryId, selected, onSelectCategory } = props;
+
+  const handlePress = useCallback(() => {
+    onSelectCategory(categoryId);
+  }, [categoryId, onSelectCategory]);
+
+  return <ChipMemo label={label} selected={selected} onPress={handlePress} />;
+};

@@ -9,7 +9,7 @@ import { useCheckout } from '../hooks/useCheckout';
 import { CheckoutSummary } from '../components/CheckoutSummary';
 import { PlaceOrderButton } from '../components/PlaceOrderButton';
 
-type Props = NativeStackScreenProps<RootStackParamList, typeof routes.checkout>;
+type CheckoutScreenProps = NativeStackScreenProps<RootStackParamList, typeof routes.checkout>;
 
 const Content = styled.View(({ theme }) => ({
   flex: 1,
@@ -17,7 +17,8 @@ const Content = styled.View(({ theme }) => ({
   gap: theme.spacing.lg
 }));
 
-export const CheckoutScreen = ({ navigation }: Props) => {
+export const CheckoutScreen: React.FC<CheckoutScreenProps> = (props) => {
+  const { navigation } = props;
   const checkout = useCheckout();
 
   useEffect(() => {

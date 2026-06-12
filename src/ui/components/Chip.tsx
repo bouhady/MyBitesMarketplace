@@ -25,8 +25,14 @@ const ChipLabel = styled.Text<{ selected: boolean }>(({ theme, selected }) => ({
   color: selected ? theme.colors.accentText : theme.colors.textPrimary
 }));
 
-export const Chip = memo(({ label, selected, onPress }: ChipProps) => (
-  <ChipFrame accessibilityRole="button" selected={selected} onPress={onPress}>
-    <ChipLabel selected={selected}>{label}</ChipLabel>
-  </ChipFrame>
-));
+export const Chip: React.FC<ChipProps> = (props) => {
+  const { label, selected, onPress } = props;
+
+  return (
+    <ChipFrame accessibilityRole="button" selected={selected} onPress={onPress}>
+      <ChipLabel selected={selected}>{label}</ChipLabel>
+    </ChipFrame>
+  );
+};
+
+export const ChipMemo = memo(Chip);

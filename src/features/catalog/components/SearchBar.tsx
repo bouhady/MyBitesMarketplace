@@ -17,14 +17,20 @@ const Input = styled.TextInput(({ theme }) => ({
   ...theme.typography.body
 }));
 
-export const SearchBar = memo(({ value, onChangeText }: SearchBarProps) => (
-  <Input
-    accessibilityLabel="Search products"
-    placeholder="Search products"
-    placeholderTextColor="#66706A"
-    value={value}
-    onChangeText={onChangeText}
-    autoCorrect={false}
-    clearButtonMode="while-editing"
-  />
-));
+export const SearchBar: React.FC<SearchBarProps> = (props) => {
+  const { value, onChangeText } = props;
+
+  return (
+    <Input
+      accessibilityLabel="Search products"
+      placeholder="Search products"
+      placeholderTextColor="#66706A"
+      value={value}
+      onChangeText={onChangeText}
+      autoCorrect={false}
+      clearButtonMode="while-editing"
+    />
+  );
+};
+
+export const SearchBarMemo = memo(SearchBar);

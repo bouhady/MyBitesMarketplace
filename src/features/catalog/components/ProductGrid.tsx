@@ -3,7 +3,7 @@ import { ActivityIndicator, RefreshControl, useWindowDimensions } from 'react-na
 import { FlashList } from '@shopify/flash-list';
 import styled from 'styled-components/native';
 import type { Product } from '../../../domain/entities/Product';
-import { ProductCard } from './ProductCard';
+import { ProductCardActionBinder } from './ProductCard';
 import { CatalogEmptyState } from './CatalogEmptyState';
 
 interface ProductGridProps {
@@ -19,12 +19,19 @@ const Footer = styled.View(({ theme }) => ({
   alignItems: 'center'
 }));
 
-export const ProductGrid = memo(({ products, status, onProductPress, onRefresh, onLoadMore }: ProductGridProps) => {
+const ProductGridFooter = () => (
+  <Footer>
+    <ActivityIndicator />
+  </Footer>
+);
+
+export const ProductGrid: React.FC<ProductGridProps> = (props) => {
+  const { products, status, onProductPress, onRefresh, onLoadMore } = props;
   const { width } = useWindowDimensions();
   const columns = width >= 720 ? 3 : 2;
 
   const renderItem = useCallback(
-    ({ item }: { item: Product }) => <ProductCard product={item} onPress={onProductPress} />,
+    ({ item }: { item: Product }) => <ProductCardActionBinder product={item} onPress={onProductPress} />,
     [onProductPress]
   );
 
@@ -38,9 +45,11 @@ export const ProductGrid = memo(({ products, status, onProductPress, onRefresh, 
       estimatedItemSize={254}
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.45}
-      ListEmptyComponent={status === 'success' ? <CatalogEmptyState /> : null}
-      ListFooterComponent={status === 'loadingMore' ? <Footer><ActivityIndicator /></Footer> : null}
+      ListEmptyComponent={status === 'success' ? CatalogEmptyState : null}
+      ListFooterComponent={status === 'loadingMore' ? ProductGridFooter : null}
       refreshControl={<RefreshControl refreshing={status === 'refreshing'} onRefresh={onRefresh} />}
     />
   );
-});
+};
+
+export const ProductGridMemo = memo(ProductGrid);

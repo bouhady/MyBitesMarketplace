@@ -7,9 +7,9 @@ import { useCart } from '../hooks/useCart';
 import { EmptyCartState } from '../components/EmptyCartState';
 import { PopulatedCartContent } from '../components/PopulatedCartContent';
 
-type Props = NativeStackScreenProps<RootStackParamList, typeof routes.cart>;
+type CartScreenProps = NativeStackScreenProps<RootStackParamList, typeof routes.cart>;
 
-export const CartScreen = (props: Props) => {
+export const CartScreen: React.FC<CartScreenProps> = (props) => {
   const cart = useCart();
 
   return (

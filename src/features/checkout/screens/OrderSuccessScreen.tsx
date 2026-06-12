@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import styled from 'styled-components/native';
 import { routes } from '../../../navigation/routes';
@@ -8,7 +8,7 @@ import { Button } from '../../../ui/components/Button';
 import { BodyText, TitleText } from '../../../ui/components/Text';
 import { useCheckout } from '../hooks/useCheckout';
 
-type Props = NativeStackScreenProps<RootStackParamList, typeof routes.orderSuccess>;
+type OrderSuccessScreenProps = NativeStackScreenProps<RootStackParamList, typeof routes.orderSuccess>;
 
 const Content = styled.View(({ theme }) => ({
   flex: 1,
@@ -17,8 +17,14 @@ const Content = styled.View(({ theme }) => ({
   gap: theme.spacing.md
 }));
 
-export const OrderSuccessScreen = ({ navigation }: Props) => {
+export const OrderSuccessScreen: React.FC<OrderSuccessScreenProps> = (props) => {
+  const { navigation } = props;
   const checkout = useCheckout();
+
+  const backToMarketplace = useCallback(() => {
+    checkout.resetCheckout();
+    navigation.popToTop();
+  }, [checkout, navigation]);
 
   return (
     <Screen>
@@ -26,13 +32,7 @@ export const OrderSuccessScreen = ({ navigation }: Props) => {
         <Content>
           <TitleText>Order placed</TitleText>
           <BodyText>{checkout.latestOrderId ? `Confirmation ${checkout.latestOrderId}` : 'Your order is confirmed.'}</BodyText>
-          <Button
-            label="Back to marketplace"
-            onPress={() => {
-              checkout.resetCheckout();
-              navigation.popToTop();
-            }}
-          />
+          <Button label="Back to marketplace" onPress={backToMarketplace} />
         </Content>
       </ScreenContent>
     </Screen>

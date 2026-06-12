@@ -12,10 +12,18 @@ const ProductImage = styled(Image)(({ theme }) => ({
   backgroundColor: theme.colors.surfaceMuted
 }));
 
-export const ProductImageCarousel = ({ urls }: { urls: string[] }) => (
-  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-    {urls.map((url) => (
-      <ProductImage key={url} source={{ uri: url }} cachePolicy={getCachePolicy()} contentFit="cover" />
-    ))}
-  </ScrollView>
-);
+interface ProductImageCarouselProps {
+  urls: string[];
+}
+
+export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = (props) => {
+  const { urls } = props;
+
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      {urls.map((url) => (
+        <ProductImage key={url} source={{ uri: url }} cachePolicy={getCachePolicy()} contentFit="cover" />
+      ))}
+    </ScrollView>
+  );
+};

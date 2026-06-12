@@ -7,7 +7,7 @@ import { formatMoney } from '../../../shared/utils/formatMoney';
 import { getCachePolicy } from '../../../shared/utils/imageCache';
 import { Button } from '../../../ui/components/Button';
 import { BodyText, CaptionText } from '../../../ui/components/Text';
-import { QuantityStepper } from './QuantityStepper';
+import { QuantityStepperMemo } from './QuantityStepper';
 
 const Row = styled.View(({ theme }) => ({
   flexDirection: 'row',
@@ -44,7 +44,7 @@ export const CartItemRow: React.FC<CartItemRowProps> = (props) => {
       <Info>
         <BodyText numberOfLines={2}>{product.title}</BodyText>
         <CaptionText>{formatMoney(product.price)} each</CaptionText>
-        <QuantityStepper
+        <QuantityStepperMemo
           quantity={item.quantity}
           canIncrement={item.quantity < product.stock.available}
           onIncrement={onIncrement}

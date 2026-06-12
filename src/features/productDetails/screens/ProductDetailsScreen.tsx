@@ -11,9 +11,10 @@ import { useProductDetails } from '../hooks/useProductDetails';
 import { ProductDetailsContent } from '../components/ProductDetailsContent';
 import { ProductUnavailableState } from '../components/ProductUnavailableState';
 
-type Props = NativeStackScreenProps<RootStackParamList, typeof routes.productDetails>;
+type ProductDetailsScreenProps = NativeStackScreenProps<RootStackParamList, typeof routes.productDetails>;
 
-export const ProductDetailsScreen = ({ route, navigation }: Props) => {
+export const ProductDetailsScreen: React.FC<ProductDetailsScreenProps> = (props) => {
+  const { route, navigation } = props;
   const dispatch = useAppDispatch();
   const { product, status, error, retry } = useProductDetails(route.params.productId);
   const maxQuantity = product?.stock.available ?? 0;

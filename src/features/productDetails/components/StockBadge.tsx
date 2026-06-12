@@ -14,8 +14,14 @@ const Label = styled.Text<{ inStock: boolean }>(({ theme, inStock }) => ({
   color: inStock ? theme.colors.success : theme.colors.danger
 }));
 
-export const StockBadge = ({ available }: { available: number }) => {
+interface StockBadgeProps {
+  available: number;
+}
+
+export const StockBadge: React.FC<StockBadgeProps> = (props) => {
+  const { available } = props;
   const inStock = available > 0;
+
   return (
     <Badge inStock={inStock}>
       <Label inStock={inStock}>{inStock ? `${available} in stock` : 'Out of stock'}</Label>

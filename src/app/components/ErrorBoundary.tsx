@@ -1,9 +1,7 @@
-import React, { type ErrorInfo, type ReactNode } from 'react';
+import React, { type ErrorInfo, type PropsWithChildren } from 'react';
 import styled from 'styled-components/native';
 
-interface ErrorBoundaryProps {
-  children: ReactNode;
-}
+type ErrorBoundaryProps = PropsWithChildren;
 
 interface ErrorBoundaryState {
   hasError: boolean;

@@ -9,10 +9,20 @@ const Wrapper = styled.View(({ theme }) => ({
   gap: theme.spacing.md
 }));
 
-export const ErrorState = ({ title, message, onRetry }: { title: string; message: string; onRetry: () => void }) => (
-  <Wrapper>
-    <SubtitleText>{title}</SubtitleText>
-    <BodyText>{message}</BodyText>
-    <Button label="Retry" onPress={onRetry} />
-  </Wrapper>
-);
+interface ErrorStateProps {
+  title: string;
+  message: string;
+  onRetry: () => void;
+}
+
+export const ErrorState: React.FC<ErrorStateProps> = (props) => {
+  const { title, message, onRetry } = props;
+
+  return (
+    <Wrapper>
+      <SubtitleText>{title}</SubtitleText>
+      <BodyText>{message}</BodyText>
+      <Button label="Retry" onPress={onRetry} />
+    </Wrapper>
+  );
+};

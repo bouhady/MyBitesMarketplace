@@ -10,9 +10,17 @@ const Wrapper = styled.View(({ theme }) => ({
   gap: theme.spacing.md
 }));
 
-export const LoadingOverlay = ({ label = 'Loading' }: { label?: string }) => (
-  <Wrapper>
-    <ActivityIndicator />
-    <CaptionText>{label}</CaptionText>
-  </Wrapper>
-);
+interface LoadingOverlayProps {
+  label?: string;
+}
+
+export const LoadingOverlay: React.FC<LoadingOverlayProps> = (props) => {
+  const { label = 'Loading' } = props;
+
+  return (
+    <Wrapper>
+      <ActivityIndicator />
+      <CaptionText>{label}</CaptionText>
+    </Wrapper>
+  );
+};

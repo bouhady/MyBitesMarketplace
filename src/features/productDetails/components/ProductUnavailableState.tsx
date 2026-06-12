@@ -9,9 +9,13 @@ interface ProductUnavailableStateProps {
   onBackToCatalog: () => void;
 }
 
-export const ProductUnavailableState = ({ error, onRetry, onBackToCatalog }: ProductUnavailableStateProps) => (
-  <ScreenContent>
-    <ErrorState title="Product unavailable" message={error ?? 'This product could not be found.'} onRetry={onRetry} />
-    <Button label="Back to catalog" variant="secondary" onPress={onBackToCatalog} />
-  </ScreenContent>
-);
+export const ProductUnavailableState: React.FC<ProductUnavailableStateProps> = (props) => {
+  const { error, onRetry, onBackToCatalog } = props;
+
+  return (
+    <ScreenContent>
+      <ErrorState title="Product unavailable" message={error ?? 'This product could not be found.'} onRetry={onRetry} />
+      <Button label="Back to catalog" variant="secondary" onPress={onBackToCatalog} />
+    </ScreenContent>
+  );
+};

@@ -19,14 +19,24 @@ const Row = styled.View({
   justifyContent: 'space-between'
 });
 
-export const CartSummary = memo(({ pricing }: { pricing: CartPricingSummary }) => (
-  <Panel>
-    <SubtitleText>Summary</SubtitleText>
-    <Row><BodyText>Items</BodyText><BodyText>{pricing.totalItems}</BodyText></Row>
-    <Row><BodyText>Subtotal</BodyText><BodyText>{formatMoney(pricing.subtotal)}</BodyText></Row>
-    <Row><BodyText>Discount</BodyText><BodyText>{formatMoney(pricing.discount)}</BodyText></Row>
-    <Row><BodyText>Tax</BodyText><BodyText>{formatMoney(pricing.tax)}</BodyText></Row>
-    <Divider />
-    <Row><SubtitleText>Total</SubtitleText><SubtitleText>{formatMoney(pricing.total)}</SubtitleText></Row>
-  </Panel>
-));
+interface CartSummaryProps {
+  pricing: CartPricingSummary;
+}
+
+export const CartSummary: React.FC<CartSummaryProps> = (props) => {
+  const { pricing } = props;
+
+  return (
+    <Panel>
+      <SubtitleText>Summary</SubtitleText>
+      <Row><BodyText>Items</BodyText><BodyText>{pricing.totalItems}</BodyText></Row>
+      <Row><BodyText>Subtotal</BodyText><BodyText>{formatMoney(pricing.subtotal)}</BodyText></Row>
+      <Row><BodyText>Discount</BodyText><BodyText>{formatMoney(pricing.discount)}</BodyText></Row>
+      <Row><BodyText>Tax</BodyText><BodyText>{formatMoney(pricing.tax)}</BodyText></Row>
+      <Divider />
+      <Row><SubtitleText>Total</SubtitleText><SubtitleText>{formatMoney(pricing.total)}</SubtitleText></Row>
+    </Panel>
+  );
+};
+
+export const CartSummaryMemo = memo(CartSummary);

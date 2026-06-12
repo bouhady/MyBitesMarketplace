@@ -1,4 +1,4 @@
-import React, { memo, type ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
 import styled from 'styled-components/native';
 
@@ -51,14 +51,24 @@ const BadgeLabel = styled.Text(({ theme }) => ({
   fontWeight: '700'
 }));
 
-export const Button = memo(({ label, variant = 'primary', loading = false, disabled = false, icon, badge, ...props }: ButtonProps) => (
-  <ButtonFrame accessibilityRole="button" variant={variant} disabledState={disabled || loading} disabled={disabled || loading} {...props}>
-    {loading ? <ActivityIndicator color={variant === 'secondary' ? '#1F2421' : '#FFFFFF'} /> : icon}
-    <ButtonLabel variant={variant}>{label}</ButtonLabel>
-    {!loading && badge !== undefined && badge !== null ? (
-      <Badge>
-        <BadgeLabel>{badge}</BadgeLabel>
-      </Badge>
-    ) : null}
-  </ButtonFrame>
-));
+export const Button: React.FC<ButtonProps> = (props) => {
+  const { label, variant = 'primary', loading = false, disabled = false, icon, badge, ...pressableProps } = props;
+
+  return (
+    <ButtonFrame
+      accessibilityRole="button"
+      variant={variant}
+      disabledState={disabled || loading}
+      disabled={disabled || loading}
+      {...pressableProps}
+    >
+      {loading ? <ActivityIndicator color={variant === 'secondary' ? '#1F2421' : '#FFFFFF'} /> : icon}
+      <ButtonLabel variant={variant}>{label}</ButtonLabel>
+      {!loading && badge !== undefined && badge !== null ? (
+        <Badge>
+          <BadgeLabel>{badge}</BadgeLabel>
+        </Badge>
+      ) : null}
+    </ButtonFrame>
+  );
+};

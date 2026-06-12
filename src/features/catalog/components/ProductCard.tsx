@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import styled from 'styled-components/native';
@@ -9,7 +9,7 @@ import { BodyText, CaptionText } from '../../../ui/components/Text';
 
 interface ProductCardProps {
   product: Product;
-  onPress: (product: Product) => void;
+  onPress: () => void;
 }
 
 const Card = styled(Pressable)(({ theme }) => ({
@@ -38,14 +38,35 @@ const Price = styled(BodyText)(({ theme }) => ({
   fontWeight: '700'
 }));
 
-export const ProductCard = memo(({ product, onPress }: ProductCardProps) => (
-  <Card accessibilityRole="button" accessibilityLabel={`Open ${product.title}`} onPress={() => onPress(product)}>
-    <ProductImage source={{ uri: product.images.thumbnailUrl }} cachePolicy={getCachePolicy()} contentFit="cover" />
-    <Content>
-      <BodyText numberOfLines={2}>{product.title}</BodyText>
-      <CaptionText>{product.rating.average.toFixed(1)} rating</CaptionText>
-      <CaptionText>{product.stock.available > 0 ? `${product.stock.available} in stock` : 'Out of stock'}</CaptionText>
-      <Price>{formatMoney(product.price)}</Price>
-    </Content>
-  </Card>
-));
+export const ProductCard: React.FC<ProductCardProps> = (props) => {
+  const { product, onPress } = props;
+
+  return (
+    <Card accessibilityRole="button" accessibilityLabel={`Open ${product.title}`} onPress={onPress}>
+      <ProductImage source={{ uri: product.images.thumbnailUrl }} cachePolicy={getCachePolicy()} contentFit="cover" />
+      <Content>
+        <BodyText numberOfLines={2}>{product.title}</BodyText>
+        <CaptionText>{product.rating.average.toFixed(1)} rating</CaptionText>
+        <CaptionText>{product.stock.available > 0 ? `${product.stock.available} in stock` : 'Out of stock'}</CaptionText>
+        <Price>{formatMoney(product.price)}</Price>
+      </Content>
+    </Card>
+  );
+};
+
+export const ProductCardMemo = memo(ProductCard);
+
+interface ProductCardActionBinderProps {
+  product: Product;
+  onPress: (product: Product) => void;
+}
+
+export const ProductCardActionBinder: React.FC<ProductCardActionBinderProps> = (props) => {
+  const { product, onPress } = props;
+
+  const handlePress = useCallback(() => {
+    onPress(product);
+  }, [onPress, product]);
+
+  return <ProductCardMemo product={product} onPress={handlePress} />;
+};

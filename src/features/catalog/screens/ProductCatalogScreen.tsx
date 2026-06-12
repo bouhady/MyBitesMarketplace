@@ -10,15 +10,15 @@ import { routes } from '../../../navigation/routes';
 import type { RootStackParamList } from '../../../navigation/RootNavigator.types';
 import { useCatalog } from '../hooks/useCatalog';
 import { useProductFilters } from '../hooks/useProductFilters';
-import { SearchBar } from '../components/SearchBar';
-import { CategoryChips } from '../components/CategoryChips';
-import { SortMenu } from '../components/SortMenu';
-import { ProductGrid } from '../components/ProductGrid';
+import { SearchBarMemo } from '../components/SearchBar';
+import { CategoryChipsMemo } from '../components/CategoryChips';
+import { SortMenuMemo } from '../components/SortMenu';
+import { ProductGridMemo } from '../components/ProductGrid';
 import { CatalogSkeleton } from '../components/CatalogSkeleton';
 import { Button } from '../../../ui/components/Button';
 import { selectCartTotalItems } from '../../cart/state/cartSelectors';
 
-type Props = NativeStackScreenProps<RootStackParamList, typeof routes.catalog>;
+type ProductCatalogScreenProps = NativeStackScreenProps<RootStackParamList, typeof routes.catalog>;
 
 const Header = styled.View(({ theme }) => ({
   paddingVertical: theme.spacing.lg,
@@ -31,7 +31,8 @@ const HeaderRow = styled.View({
   justifyContent: 'space-between'
 });
 
-export const ProductCatalogScreen = ({ navigation }: Props) => {
+export const ProductCatalogScreen: React.FC<ProductCatalogScreenProps> = (props) => {
+  const { navigation } = props;
   const catalog = useCatalog();
   const filters = useProductFilters();
   const cartTotalItems = useAppSelector(selectCartTotalItems);
@@ -64,19 +65,19 @@ export const ProductCatalogScreen = ({ navigation }: Props) => {
               onPress={openCart}
             />
           </HeaderRow>
-          <SearchBar value={catalog.query} onChangeText={catalog.setQuery} />
-          <CategoryChips
+          <SearchBarMemo value={catalog.query} onChangeText={catalog.setQuery} />
+          <CategoryChipsMemo
             categories={filters.categories}
             selectedCategoryId={filters.selectedCategoryId}
             onSelectCategory={filters.selectCategory}
           />
-          <SortMenu value={filters.sort} onChange={filters.selectSort} />
+          <SortMenuMemo value={filters.sort} onChange={filters.selectSort} />
         </Header>
         {isInitialLoading ? <CatalogSkeleton /> : null}
         {hasBlockingError ? (
           <ErrorState title="Catalog unavailable" message={catalog.error ?? 'Unable to load products.'} onRetry={catalog.retry} />
         ) : (
-          <ProductGrid
+          <ProductGridMemo
             products={catalog.products}
             status={catalog.status}
             onProductPress={openProduct}

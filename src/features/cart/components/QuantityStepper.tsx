@@ -19,8 +19,17 @@ const Count = styled.View(({ theme }) => ({
   borderColor: theme.colors.border
 }));
 
-export const QuantityStepper = memo(
-  ({ quantity, canIncrement, onIncrement, onDecrement }: { quantity: number; canIncrement: boolean; onIncrement: () => void; onDecrement: () => void }) => (
+interface QuantityStepperProps {
+  quantity: number;
+  canIncrement: boolean;
+  onIncrement: () => void;
+  onDecrement: () => void;
+}
+
+export const QuantityStepper: React.FC<QuantityStepperProps> = (props) => {
+  const { quantity, canIncrement, onIncrement, onDecrement } = props;
+
+  return (
     <Row>
       <Button label="-" variant="secondary" accessibilityLabel="Decrease quantity" onPress={onDecrement} />
       <Count>
@@ -28,5 +37,7 @@ export const QuantityStepper = memo(
       </Count>
       <Button label="+" variant="secondary" accessibilityLabel="Increase quantity" disabled={!canIncrement} onPress={onIncrement} />
     </Row>
-  )
-);
+  );
+};
+
+export const QuantityStepperMemo = memo(QuantityStepper);
